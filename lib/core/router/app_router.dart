@@ -22,23 +22,22 @@ final _studentShellKey = GlobalKey<NavigatorState>();
 final _teacherShellKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final role = ref.watch(currentRoleProvider);
+  ref.watch(currentRoleProvider);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: role == UserRole.none ? '/' : '/student',
+    initialLocation: '/',
     routes: [
-      // Selección de rol
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const RoleSelectionScreen(),
-      ),
-
-      // ===== ESTUDIANTE =====
+      // ===== HOME PÚBLICO (sin auth) =====
       ShellRoute(
         navigatorKey: _studentShellKey,
         builder: (context, state, child) => StudentShell(child: child),
         routes: [
+          GoRoute(
+            path: '/',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: StudentHomeScreen()),
+          ),
           GoRoute(
             path: '/student',
             pageBuilder: (context, state) =>
@@ -55,6 +54,12 @@ final routerProvider = Provider<GoRouter>((ref) {
                 const NoTransitionPage(child: StudentProfileScreen()),
           ),
         ],
+      ),
+
+      // Login
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const RoleSelectionScreen(),
       ),
 
       // Pantallas de flujo (sin tab bar)

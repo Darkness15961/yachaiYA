@@ -7,6 +7,7 @@ import 'package:yachaiya/data/models/nivel_materia_model.dart';
 import 'package:yachaiya/data/models/sesion_model.dart';
 import 'package:yachaiya/data/models/oferta_docente_model.dart';
 import 'package:yachaiya/data/models/mensaje_chat_model.dart';
+import 'package:yachaiya/data/models/resena_model.dart';
 
 // ============================================================
 // SUPABASE AUTH
@@ -171,4 +172,46 @@ final solicitudesEntrantes = FutureProvider<List<SesionModel>>((ref) async {
       .order('fecha_inicio', ascending: false);
 
   return (response as List).map((e) => SesionModel.fromJson(e)).toList();
+});
+
+// ============================================================
+// DOCENTES DISPONIBLES (público, sin auth)
+// ============================================================
+
+final docentesDisponiblesProvider = FutureProvider<List<DocenteModel>>((
+  ref,
+) async {
+  final response = await SupabaseConfig.client
+      .from('docente')
+      .select()
+      .order('rating_promedio', ascending: false);
+  return (response as List).map((e) => DocenteModel.fromJson(e)).toList();
+});
+
+// ============================================================
+// MATERIAS TODAS (para mostrar catálogo público)
+// ============================================================
+
+final todasMateriasProvider = FutureProvider<List<MateriaModel>>((ref) async {
+  final response = await SupabaseConfig.client
+      .from('materia')
+      .select('*, nivel(*)')
+      .order('nombre');
+  return (response as List).map((e) => MateriaModel.fromJson(e)).toList();
+});
+
+// ============================================================
+// RESEÑAS DE DOCENTES
+// ============================================================
+
+final resenasDocenteProvider = FutureProvider.family<List<ResenaModel>, int>((
+  ref,
+  docenteId,
+) async {
+  final response = await SupabaseConfig.client
+      .from('resena_docente')
+      .select('*, estudiante(*)')
+      .eq('id_docente', docenteId)
+      .order('fecha_creacion', ascending: false);
+  return (response as List).map((e) => ResenaModel.fromJson(e)).toList();
 });

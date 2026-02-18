@@ -124,6 +124,7 @@ class OffersScreen extends ConsumerWidget {
               nombre: o.docenteNombre ?? 'Profesor',
               especialidad: o.docenteEspecialidad ?? 'Especialista',
               precio: o.precioOfertado,
+              duracionMin: o.duracionMinutos,
               rating: o.docenteRating ?? 4.5,
               iniciales: _getInitials(o.docenteNombre),
               mensaje: o.mensaje,
@@ -155,6 +156,7 @@ class OffersScreen extends ConsumerWidget {
           nombre: nombre,
           especialidad: esp,
           precio: precio,
+          duracionMin: 40,
           rating: rating,
           iniciales: ini,
           delay: i * 120,
@@ -184,6 +186,7 @@ class _OfferCard extends StatelessWidget {
   final String nombre;
   final String especialidad;
   final double precio;
+  final int duracionMin;
   final double rating;
   final String iniciales;
   final String? mensaje;
@@ -194,6 +197,7 @@ class _OfferCard extends StatelessWidget {
     required this.nombre,
     required this.especialidad,
     required this.precio,
+    this.duracionMin = 40,
     required this.rating,
     required this.iniciales,
     this.mensaje,
@@ -297,7 +301,37 @@ class _OfferCard extends StatelessWidget {
                       color: AppColors.textDark,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 2),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.brand.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.timer_rounded,
+                          size: 12,
+                          color: AppColors.brand,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          '$duracionMin min',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.brand,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
                   Container(
                     decoration: BoxDecoration(
                       gradient: AppColors.primaryGradient,

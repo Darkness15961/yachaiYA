@@ -53,6 +53,23 @@ class AuthService {
   static Stream<AuthState> get onAuthStateChange =>
       _client.auth.onAuthStateChange;
 
+  /// Buscar si el usuario actual ya tiene cuenta de docente
+  static Future<DocenteModel?> findDocente() async {
+    final user = currentUser;
+    if (user == null) return null;
+
+    final existing = await _client
+        .from('docente')
+        .select()
+        .eq('email', user.email!)
+        .maybeSingle();
+
+    if (existing != null) {
+      return DocenteModel.fromJson(existing);
+    }
+    return null;
+  }
+
   /// Buscar estudiante por email, si no existe lo crea
   static Future<EstudianteModel> findOrCreateEstudiante() async {
     final user = currentUser;

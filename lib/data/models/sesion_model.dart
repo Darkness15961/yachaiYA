@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class SesionModel {
   final int id;
   final int idEstudiante;
@@ -9,6 +11,11 @@ class SesionModel {
   final DateTime? fechaInicio;
   final DateTime? fechaFin;
   final double costoTotal;
+
+  // ── Nuevos campos ──
+  final String duracionTipo; // '30min' o '60min'
+  final String tipoClase; // 'publica' o 'privada'
+  final String? codigoAcceso; // código para clases privadas
 
   // Relaciones opcionales
   final String? docenteNombre;
@@ -25,6 +32,9 @@ class SesionModel {
     this.fechaInicio,
     this.fechaFin,
     this.costoTotal = 0.0,
+    this.duracionTipo = '60min',
+    this.tipoClase = 'publica',
+    this.codigoAcceso,
     this.docenteNombre,
     this.materiaNombre,
   });
@@ -49,6 +59,9 @@ class SesionModel {
           ? DateTime.parse(json['fecha_fin'] as String)
           : null,
       costoTotal: (json['costo_total'] as num?)?.toDouble() ?? 0.0,
+      duracionTipo: json['duracion_tipo'] as String? ?? '60min',
+      tipoClase: json['tipo_clase'] as String? ?? 'publica',
+      codigoAcceso: json['codigo_acceso'] as String?,
       docenteNombre: docente != null
           ? '${docente['nombre']} ${docente['apellido']}'
           : null,
@@ -66,9 +79,23 @@ class SesionModel {
     'fecha_inicio': fechaInicio?.toIso8601String(),
     'fecha_fin': fechaFin?.toIso8601String(),
     'costo_total': costoTotal,
+    'duracion_tipo': duracionTipo,
+    'tipo_clase': tipoClase,
+    'codigo_acceso': codigoAcceso,
   };
 
   bool get estaActiva => estado == 'Aceptada' || estado == 'En_Curso';
 
   bool get estaBuscando => estado == 'Buscando';
+
+  bool get esPrivada => tipoClase == 'privada';
+
+  String get duracionLabel => duracionTipo == '30min' ? '30 min' : '1 hora';
+
+  /// Genera un código aleatorio de 6 caracteres para clases privadas
+  static String generarCodigo() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    final rng = Random();
+    return List.generate(6, (_) => chars[rng.nextInt(chars.length)]).join();
+  }
 }

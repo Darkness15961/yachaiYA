@@ -13,60 +13,154 @@ class WalletScreen extends ConsumerWidget {
     final docente = ref.watch(mockDocenteProvider);
 
     final mockMovimientos = [
-      _Movimiento('Sesión con Carlos M.', 'Ingreso_Clase', 20.0, '14 Feb'),
-      _Movimiento('Comisión App (10%)', 'Comision_App', -2.0, '14 Feb'),
-      _Movimiento('Sesión con Ana P.', 'Ingreso_Clase', 25.0, '12 Feb'),
-      _Movimiento('Comisión App (10%)', 'Comision_App', -2.5, '12 Feb'),
-      _Movimiento('Retiro a Yape', 'Retiro_Yape', -40.0, '10 Feb'),
-      _Movimiento('Bono de Bienvenida', 'Bono_Campaña', 20.0, '05 Feb'),
+      _Movimiento(
+        'Sesión con Carlos M.',
+        'Ingreso_Clase',
+        20.0,
+        'Hoy, 3:15 PM',
+      ),
+      _Movimiento('Comisión App (10%)', 'Comision_App', -2.0, 'Hoy, 3:15 PM'),
+      _Movimiento('Sesión con Ana P.', 'Ingreso_Clase', 25.0, 'Ayer, 5:00 PM'),
+      _Movimiento('Comisión App (10%)', 'Comision_App', -2.5, 'Ayer, 5:00 PM'),
+      _Movimiento('Retiro a Yape', 'Retiro_Yape', -40.0, '10 Feb, 9:30 AM'),
+      _Movimiento(
+        'Bono de Bienvenida',
+        'Bono_Campaña',
+        20.0,
+        '05 Feb, 0:00 AM',
+      ),
     ];
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 90),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tarjeta de saldo
+          //  Saldo Card con glassmorphism
           Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(22),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF10B981),
+                      Color(0xFF059669),
+                      Color(0xFF047857),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.brand.withValues(alpha: 0.35),
+                      color: const Color(0xFF10B981).withValues(alpha: 0.35),
                       blurRadius: 30,
-                      offset: const Offset(0, 12),
+                      offset: const Offset(0, 14),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Saldo Disponible',
-                      style: GoogleFonts.inter(
-                        color: Colors.white70,
-                        fontSize: 13,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Saldo Disponible',
+                          style: GoogleFonts.inter(
+                            color: Colors.white70,
+                            fontSize: 13,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Activo',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     Text(
-                      'S/ ${docente?.saldoActual.toStringAsFixed(2) ?? "120.00"}',
+                      'S/ ${docente?.saldoActual.toStringAsFixed(2) ?? "0.00"}',
                       style: GoogleFonts.inter(
                         color: Colors.white,
-                        fontSize: 36,
+                        fontSize: 38,
                         fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 20),
+
+                    // Quick stats
                     Container(
-                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(999),
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(14),
                       ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _QuickStat(
+                            icon: Icons.arrow_downward_rounded,
+                            label: 'Ingresos',
+                            value: '+S/ 65.00',
+                          ),
+                          Container(
+                            width: 1,
+                            height: 30,
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                          _QuickStat(
+                            icon: Icons.arrow_upward_rounded,
+                            label: 'Retiros',
+                            value: '-S/ 40.00',
+                          ),
+                          Container(
+                            width: 1,
+                            height: 30,
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                          _QuickStat(
+                            icon: Icons.percent_rounded,
+                            label: 'Comisiones',
+                            value: '-S/ 4.50',
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+
+                    // Botón retirar
+                    SizedBox(
+                      width: double.infinity,
                       child: ElevatedButton.icon(
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -74,7 +168,7 @@ class WalletScreen extends ConsumerWidget {
                               content: const Text(
                                 'Retiro a Yape solicitado (próximamente)',
                               ),
-                              backgroundColor: AppColors.brand,
+                              backgroundColor: Colors.white,
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -91,10 +185,13 @@ class WalletScreen extends ConsumerWidget {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFF059669),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
                         ),
                       ),
                     ),
@@ -102,27 +199,94 @@ class WalletScreen extends ConsumerWidget {
                 ),
               )
               .animate()
-              .fadeIn(duration: 300.ms)
+              .fadeIn(duration: 400.ms)
               .scale(begin: const Offset(0.95, 0.95)),
 
           const SizedBox(height: 24),
 
-          Text(
-            'Movimientos',
-            style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w700),
+          // Título movimientos
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Movimientos',
+                style: GoogleFonts.inter(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.muted.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  '${mockMovimientos.length} registros',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.muted,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
           ...mockMovimientos.asMap().entries.map((entry) {
             final i = entry.key;
             final mov = entry.value;
             return _MovimientoTile(movimiento: mov).animate().fadeIn(
-              delay: Duration(milliseconds: i * 80),
+              delay: Duration(milliseconds: 200 + i * 80),
               duration: 250.ms,
             );
           }),
         ],
       ),
+    );
+  }
+}
+
+// ── Quick Stat ──
+class _QuickStat extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _QuickStat({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: Colors.white70, size: 16),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            color: Colors.white54,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -157,7 +321,7 @@ class _MovimientoTile extends StatelessWidget {
   }
 
   Color get _iconColor {
-    if (movimiento.monto >= 0) return AppColors.ok;
+    if (movimiento.monto >= 0) return const Color(0xFF10B981);
     if (movimiento.tipo == 'Comision_App') return AppColors.warn;
     return AppColors.danger;
   }
@@ -171,17 +335,17 @@ class _MovimientoTile extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.line),
       ),
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
               color: _iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(13),
             ),
             child: Icon(_icon, color: _iconColor, size: 20),
           ),
@@ -197,22 +361,32 @@ class _MovimientoTile extends StatelessWidget {
                     fontSize: 13,
                   ),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   movimiento.fecha,
                   style: GoogleFonts.inter(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: AppColors.muted,
                   ),
                 ),
               ],
             ),
           ),
-          Text(
-            '${isPositive ? '+' : ''}S/ ${movimiento.monto.toStringAsFixed(2)}',
-            style: GoogleFonts.inter(
-              fontWeight: FontWeight.w800,
-              fontSize: 14,
-              color: isPositive ? AppColors.ok : AppColors.danger,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: isPositive
+                  ? const Color(0xFF10B981).withValues(alpha: 0.08)
+                  : AppColors.danger.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              '${isPositive ? '+' : ''}S/ ${movimiento.monto.toStringAsFixed(2)}',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+                color: isPositive ? const Color(0xFF10B981) : AppColors.danger,
+              ),
             ),
           ),
         ],
